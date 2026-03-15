@@ -1,3 +1,5 @@
+import '../data/city_data.dart';
+
 enum AppLanguage { de, en }
 
 class AppStrings {
@@ -5,8 +7,21 @@ class AppStrings {
   const AppStrings(this.language);
 
   // ── Home Screen ──
-  String get subtitle =>
-      language == AppLanguage.de ? 'BERLINER LINIENRATEN' : 'BERLIN LINE QUIZ';
+  String get cityLabel =>
+      language == AppLanguage.de ? 'Stadt' : 'City';
+  String get munich =>
+      language == AppLanguage.de ? 'München' : 'Munich';
+  String subtitle(City city) {
+    if (city == City.berlin) {
+      return language == AppLanguage.de
+          ? 'BERLINER LINIENRATEN'
+          : 'BERLIN LINE QUIZ';
+    } else {
+      return language == AppLanguage.de
+          ? 'MÜNCHNER LINIENRATEN'
+          : 'MUNICH LINE QUIZ';
+    }
+  }
   String get areaLabel =>
       language == AppLanguage.de ? 'Streckengebiet' : 'Area';
   String get ringbahn => 'Ringbahn';

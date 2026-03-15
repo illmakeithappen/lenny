@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../data/lines.dart';
+import '../data/city_data.dart';
+import '../data/munich.dart';
 import '../data/stations.dart';
 import '../l10n/app_strings.dart';
 import '../main.dart';
@@ -14,20 +15,38 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  City _selectedCity = City.berlin;
   bool _innerRingOnly = false;
   bool _includeUBahn = true;
   bool _includeSBahn = true;
 
+  CityData get _cityData =>
+      _selectedCity == City.berlin ? berlinData : munichData;
+
   int get _stationCount {
-    final base = _innerRingOnly ? innerRingStations : allStations;
+    final cd = _cityData;
+    final base = (_innerRingOnly && cd.innerRingStations != null)
+        ? cd.innerRingStations!
+        : cd.allStations;
     if (_includeUBahn && _includeSBahn) return base.length;
     final activeLineIds = <String>{
-      if (_includeUBahn) ...uBahnLines.map((l) => l.id),
-      if (_includeSBahn) ...sBahnLines.map((l) => l.id),
+      if (_includeUBahn) ...cd.uBahnLines.map((l) => l.id),
+      if (_includeSBahn) ...cd.sBahnLines.map((l) => l.id),
     };
     return base
         .where((s) => s.lineIds.intersection(activeLineIds).isNotEmpty)
         .length;
+  }
+
+  void _selectCity(City city) {
+    if (city == _selectedCity) return;
+    setState(() {
+      _selectedCity = city;
+      // Reset inner ring when switching away from Berlin
+      if (city != City.berlin) _innerRingOnly = false;
+      _includeUBahn = true;
+      _includeSBahn = true;
+    });
   }
 
   @override
@@ -98,7 +117,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
-                      s.subtitle,
+                      s.subtitle(_selectedCity),
                       style: const TextStyle(
                         fontSize: 14,
                         letterSpacing: 4,
@@ -109,7 +128,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const SizedBox(height: 32),
 
-                  // Mode toggle card
+                  // City picker card
                   Container(
                     constraints: const BoxConstraints(maxWidth: 360),
                     decoration: BoxDecoration(
@@ -126,13 +145,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(
-                              Icons.train,
+                              Icons.location_city_rounded,
                               color: Colors.white.withValues(alpha: 0.7),
                               size: 20,
                             ),
                             const SizedBox(width: 8),
                             Text(
-                              s.areaLabel,
+                              s.cityLabel,
                               style: const TextStyle(
                                 color: Colors.white70,
                                 fontSize: 14,
@@ -142,28 +161,25 @@ class _HomeScreenState extends State<HomeScreen> {
                           ],
                         ),
                         const SizedBox(height: 16),
-                        // Toggle buttons
                         Row(
                           children: [
                             Expanded(
                               child: _modeButton(
-                                label: s.ringbahn,
-                                subtitle: s.ringbahnSub,
-                                icon: Icons.circle_outlined,
-                                isSelected: _innerRingOnly,
-                                onTap: () =>
-                                    setState(() => _innerRingOnly = true),
+                                label: 'Berlin',
+                                subtitle: '',
+                                icon: Icons.location_on_rounded,
+                                isSelected: _selectedCity == City.berlin,
+                                onTap: () => _selectCity(City.berlin),
                               ),
                             ),
                             const SizedBox(width: 8),
                             Expanded(
                               child: _modeButton(
-                                label: s.fullNetwork,
-                                subtitle: s.fullNetworkSub,
-                                icon: Icons.public,
-                                isSelected: !_innerRingOnly,
-                                onTap: () =>
-                                    setState(() => _innerRingOnly = false),
+                                label: s.munich,
+                                subtitle: '',
+                                icon: Icons.location_on_rounded,
+                                isSelected: _selectedCity == City.munich,
+                                onTap: () => _selectCity(City.munich),
                               ),
                             ),
                           ],
@@ -171,6 +187,71 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     ),
                   ),
+
+                  // Mode toggle card (Berlin only)
+                  if (_selectedCity == City.berlin) ...[
+                    const SizedBox(height: 16),
+                    Container(
+                      constraints: const BoxConstraints(maxWidth: 360),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.15),
+                        ),
+                      ),
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.train,
+                                color: Colors.white.withValues(alpha: 0.7),
+                                size: 20,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                s.areaLabel,
+                                style: const TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: _modeButton(
+                                  label: s.ringbahn,
+                                  subtitle: s.ringbahnSub,
+                                  icon: Icons.circle_outlined,
+                                  isSelected: _innerRingOnly,
+                                  onTap: () =>
+                                      setState(() => _innerRingOnly = true),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: _modeButton(
+                                  label: s.fullNetwork,
+                                  subtitle: s.fullNetworkSub,
+                                  icon: Icons.public,
+                                  isSelected: !_innerRingOnly,
+                                  onTap: () =>
+                                      setState(() => _innerRingOnly = false),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
 
                   const SizedBox(height: 16),
 
@@ -256,6 +337,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (_) => GameScreen(
+                            cityData: _cityData,
                             innerRingOnly: _innerRingOnly,
                             includeUBahn: _includeUBahn,
                             includeSBahn: _includeSBahn,

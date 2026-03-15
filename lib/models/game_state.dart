@@ -1,11 +1,12 @@
 import 'dart:math';
-import '../data/lines.dart';
+import '../data/city_data.dart';
 import '../data/stations.dart';
 import 'game_round.dart';
 
 const int maxRounds = 10;
 
 class GameState {
+  final CityData cityData;
   final bool innerRingOnly;
   final bool includeUBahn;
   final bool includeSBahn;
@@ -14,20 +15,23 @@ class GameState {
   final Random _random = Random();
 
   GameState({
+    required this.cityData,
     this.innerRingOnly = false,
     this.includeUBahn = true,
     this.includeSBahn = true,
   });
 
   Set<String> get activeLineIds => {
-        if (includeUBahn) ...uBahnLines.map((l) => l.id),
-        if (includeSBahn) ...sBahnLines.map((l) => l.id),
+        if (includeUBahn) ...cityData.uBahnLines.map((l) => l.id),
+        if (includeSBahn) ...cityData.sBahnLines.map((l) => l.id),
       };
 
   List<Station> get _pool {
-    final base = innerRingOnly ? innerRingStations : allStations;
+    final base = (innerRingOnly && cityData.innerRingStations != null)
+        ? cityData.innerRingStations!
+        : cityData.allStations;
     final active = activeLineIds;
-    if (active.length == allLines.length) return base;
+    if (active.length == cityData.allLines.length) return base;
     return base
         .map((s) => Station(
               name: s.name,

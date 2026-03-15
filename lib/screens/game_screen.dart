@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../data/city_data.dart';
 import '../data/lines.dart';
 import '../data/stations.dart';
 import '../main.dart';
@@ -10,12 +11,14 @@ import '../widgets/station_display.dart';
 import 'score_screen.dart';
 
 class GameScreen extends StatefulWidget {
+  final CityData cityData;
   final bool innerRingOnly;
   final bool includeUBahn;
   final bool includeSBahn;
 
   const GameScreen({
     super.key,
+    required this.cityData,
     this.innerRingOnly = false,
     this.includeUBahn = true,
     this.includeSBahn = true,
@@ -36,6 +39,7 @@ class _GameScreenState extends State<GameScreen> {
   void initState() {
     super.initState();
     _gameState = GameState(
+      cityData: widget.cityData,
       innerRingOnly: widget.innerRingOnly,
       includeUBahn: widget.includeUBahn,
       includeSBahn: widget.includeSBahn,
@@ -91,7 +95,7 @@ class _GameScreenState extends State<GameScreen> {
     if (!_showingResult || _lastRound == null) return {};
     final round = _lastRound!;
     final states = <String, LineButtonState>{};
-    for (final line in allLines) {
+    for (final line in widget.cityData.allLines) {
       if (round.hits.contains(line.id)) {
         states[line.id] = LineButtonState.hit;
       } else if (round.wrongGuesses.contains(line.id)) {
@@ -222,6 +226,7 @@ class _GameScreenState extends State<GameScreen> {
               StationDisplay(station: _currentStation),
               const SizedBox(height: 20),
               LineGrid(
+                cityData: widget.cityData,
                 selectedLines: _selectedLines,
                 buttonStates: _buildButtonStates(),
                 onToggle: _toggleLine,

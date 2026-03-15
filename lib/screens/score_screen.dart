@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../data/city_data.dart';
 import '../l10n/app_strings.dart';
 import '../main.dart';
 import '../models/game_state.dart';
@@ -236,6 +237,7 @@ class ScoreScreen extends StatelessWidget {
                         Navigator.of(context).pushReplacement(
                           MaterialPageRoute(
                             builder: (_) => GameScreen(
+                              cityData: gameState.cityData,
                               innerRingOnly: gameState.innerRingOnly,
                               includeUBahn: gameState.includeUBahn,
                               includeSBahn: gameState.includeSBahn,

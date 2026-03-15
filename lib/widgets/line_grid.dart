@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import '../data/city_data.dart';
 import '../data/lines.dart';
 import 'line_button.dart';
 
 class LineGrid extends StatelessWidget {
+  final CityData cityData;
   final Set<String> selectedLines;
   final Map<String, LineButtonState> buttonStates;
   final ValueChanged<String> onToggle;
@@ -11,6 +13,7 @@ class LineGrid extends StatelessWidget {
 
   const LineGrid({
     super.key,
+    required this.cityData,
     required this.selectedLines,
     this.buttonStates = const {},
     required this.onToggle,
@@ -23,9 +26,9 @@ class LineGrid extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (showUBahn) _buildSection('U-Bahn', uBahnLines),
+        if (showUBahn) _buildSection('U-Bahn', cityData.uBahnLines),
         if (showUBahn && showSBahn) const SizedBox(height: 16),
-        if (showSBahn) _buildSection('S-Bahn', sBahnLines),
+        if (showSBahn) _buildSection('S-Bahn', cityData.sBahnLines),
       ],
     );
   }

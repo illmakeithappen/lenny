@@ -1,3 +1,6 @@
+import 'city_data.dart';
+import 'lines.dart';
+
 class Station {
   final String name;
   final Set<String> lineIds;
@@ -338,3 +341,10 @@ List<Station> _buildStations() {
     ..sort((a, b) => a.name.compareTo(b.name));
   return stations;
 }
+
+final CityData berlinData = CityData(
+  city: City.berlin,
+  allLines: allLines,
+  allStations: allStations,
+  innerRingStations: innerRingStations,
+);
