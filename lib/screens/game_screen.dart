@@ -10,8 +10,15 @@ import 'score_screen.dart';
 
 class GameScreen extends StatefulWidget {
   final bool innerRingOnly;
+  final bool includeUBahn;
+  final bool includeSBahn;
 
-  const GameScreen({super.key, this.innerRingOnly = false});
+  const GameScreen({
+    super.key,
+    this.innerRingOnly = false,
+    this.includeUBahn = true,
+    this.includeSBahn = true,
+  });
 
   @override
   State<GameScreen> createState() => _GameScreenState();
@@ -27,7 +34,11 @@ class _GameScreenState extends State<GameScreen> {
   @override
   void initState() {
     super.initState();
-    _gameState = GameState(innerRingOnly: widget.innerRingOnly);
+    _gameState = GameState(
+      innerRingOnly: widget.innerRingOnly,
+      includeUBahn: widget.includeUBahn,
+      includeSBahn: widget.includeSBahn,
+    );
     _currentStation = _gameState.nextStation();
   }
 
@@ -157,6 +168,26 @@ class _GameScreenState extends State<GameScreen> {
                   style: TextStyle(fontSize: 11, color: Colors.white70),
                 ),
               ),
+            if (!widget.includeUBahn || !widget.includeSBahn)
+              Padding(
+                padding: const EdgeInsets.only(left: 4),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.3),
+                    ),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    widget.includeUBahn ? 'U' : 'S',
+                    style: const TextStyle(fontSize: 11, color: Colors.white70),
+                  ),
+                ),
+              ),
           ],
         ),
         actions: [
@@ -192,6 +223,8 @@ class _GameScreenState extends State<GameScreen> {
                 selectedLines: _selectedLines,
                 buttonStates: _buildButtonStates(),
                 onToggle: _toggleLine,
+                showUBahn: widget.includeUBahn,
+                showSBahn: widget.includeSBahn,
               ),
               const SizedBox(height: 20),
               if (_showingResult) ...[

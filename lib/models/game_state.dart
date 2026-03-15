@@ -1,4 +1,5 @@
 import 'dart:math';
+import '../data/lines.dart';
 import '../data/stations.dart';
 import 'game_round.dart';
 
@@ -6,14 +7,35 @@ const int maxRounds = 10;
 
 class GameState {
   final bool innerRingOnly;
+  final bool includeUBahn;
+  final bool includeSBahn;
   final List<GameRound> rounds = [];
   final List<Station> _recentStations = [];
   final Random _random = Random();
 
-  GameState({this.innerRingOnly = false});
+  GameState({
+    this.innerRingOnly = false,
+    this.includeUBahn = true,
+    this.includeSBahn = true,
+  });
 
-  List<Station> get _pool =>
-      innerRingOnly ? innerRingStations : allStations;
+  Set<String> get activeLineIds => {
+        if (includeUBahn) ...uBahnLines.map((l) => l.id),
+        if (includeSBahn) ...sBahnLines.map((l) => l.id),
+      };
+
+  List<Station> get _pool {
+    final base = innerRingOnly ? innerRingStations : allStations;
+    final active = activeLineIds;
+    if (active.length == allLines.length) return base;
+    return base
+        .map((s) => Station(
+              name: s.name,
+              lineIds: s.lineIds.intersection(active),
+            ))
+        .where((s) => s.lineIds.isNotEmpty)
+        .toList();
+  }
 
   int get totalScore => rounds.fold(0, (sum, r) => sum + r.score);
   int get perfectRounds => rounds.where((r) => r.isPerfect).length;

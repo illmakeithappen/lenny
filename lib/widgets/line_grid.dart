@@ -6,12 +6,16 @@ class LineGrid extends StatelessWidget {
   final Set<String> selectedLines;
   final Map<String, LineButtonState> buttonStates;
   final ValueChanged<String> onToggle;
+  final bool showUBahn;
+  final bool showSBahn;
 
   const LineGrid({
     super.key,
     required this.selectedLines,
     this.buttonStates = const {},
     required this.onToggle,
+    this.showUBahn = true,
+    this.showSBahn = true,
   });
 
   @override
@@ -19,9 +23,9 @@ class LineGrid extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildSection('U-Bahn', uBahnLines),
-        const SizedBox(height: 16),
-        _buildSection('S-Bahn', sBahnLines),
+        if (showUBahn) _buildSection('U-Bahn', uBahnLines),
+        if (showUBahn && showSBahn) const SizedBox(height: 16),
+        if (showSBahn) _buildSection('S-Bahn', sBahnLines),
       ],
     );
   }

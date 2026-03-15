@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../data/lines.dart';
 import '../data/stations.dart';
 import '../models/game_state.dart';
 import 'game_screen.dart';
@@ -12,11 +13,24 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   bool _innerRingOnly = false;
+  bool _includeUBahn = true;
+  bool _includeSBahn = true;
+
+  int get _stationCount {
+    final base = _innerRingOnly ? innerRingStations : allStations;
+    if (_includeUBahn && _includeSBahn) return base.length;
+    final activeLineIds = <String>{
+      if (_includeUBahn) ...uBahnLines.map((l) => l.id),
+      if (_includeSBahn) ...sBahnLines.map((l) => l.id),
+    };
+    return base
+        .where((s) => s.lineIds.intersection(activeLineIds).isNotEmpty)
+        .length;
+  }
 
   @override
   Widget build(BuildContext context) {
-    final stationCount =
-        _innerRingOnly ? innerRingStations.length : allStations.length;
+    final stationCount = _stationCount;
 
     return Scaffold(
       body: Container(
@@ -147,6 +161,74 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ],
                         ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Line type filter card
+                  Container(
+                    constraints: const BoxConstraints(maxWidth: 360),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.15),
+                      ),
+                    ),
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.filter_alt_rounded,
+                              color: Colors.white.withValues(alpha: 0.7),
+                              size: 20,
+                            ),
+                            const SizedBox(width: 8),
+                            const Text(
+                              'Linientyp',
+                              style: TextStyle(
+                                color: Colors.white70,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: _toggleButton(
+                                label: 'U-Bahn',
+                                icon: Icons.directions_subway_rounded,
+                                isSelected: _includeUBahn,
+                                onTap: () {
+                                  if (_includeUBahn && !_includeSBahn) return;
+                                  setState(() =>
+                                      _includeUBahn = !_includeUBahn);
+                                },
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: _toggleButton(
+                                label: 'S-Bahn',
+                                icon: Icons.directions_railway_rounded,
+                                isSelected: _includeSBahn,
+                                onTap: () {
+                                  if (_includeSBahn && !_includeUBahn) return;
+                                  setState(() =>
+                                      _includeSBahn = !_includeSBahn);
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
                         const SizedBox(height: 12),
                         Text(
                           '$stationCount Stationen  ·  $maxRounds Runden',
@@ -168,6 +250,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         MaterialPageRoute(
                           builder: (_) => GameScreen(
                             innerRingOnly: _innerRingOnly,
+                            includeUBahn: _includeUBahn,
+                            includeSBahn: _includeSBahn,
                           ),
                         ),
                       );
@@ -208,6 +292,58 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _toggleButton({
+    required String label,
+    required IconData icon,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? Colors.white.withValues(alpha: 0.15)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: isSelected
+                ? Colors.white.withValues(alpha: 0.4)
+                : Colors.white.withValues(alpha: 0.1),
+            width: isSelected ? 2 : 1,
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              isSelected ? Icons.check_box : Icons.check_box_outline_blank,
+              color: isSelected ? Colors.white : Colors.white38,
+              size: 20,
+            ),
+            const SizedBox(width: 8),
+            Icon(
+              icon,
+              color: isSelected ? Colors.white : Colors.white54,
+              size: 22,
+            ),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: TextStyle(
+                color: isSelected ? Colors.white : Colors.white54,
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+              ),
+            ),
+          ],
         ),
       ),
     );
