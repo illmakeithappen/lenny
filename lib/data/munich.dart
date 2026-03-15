@@ -13,8 +13,8 @@ const munichLines = <LineInfo>[
   LineInfo(id: 'U4', type: LineType.uBahn, color: Color(0xFF04AF6E)),
   LineInfo(id: 'U5', type: LineType.uBahn, color: Color(0xFFBC7A00)),
   LineInfo(id: 'U6', type: LineType.uBahn, color: Color(0xFF0065AE)),
-  LineInfo(id: 'U7', type: LineType.uBahn, color: Color(0xFFC4003C)),
-  LineInfo(id: 'U8', type: LineType.uBahn, color: Color(0xFFC4003C)),
+  LineInfo(id: 'U7', type: LineType.uBahn, color: Color(0xFF9C1D51)),
+  LineInfo(id: 'U8', type: LineType.uBahn, color: Color(0xFFED6752)),
   // S-Bahn
   LineInfo(id: 'S1', type: LineType.sBahn, color: Color(0xFF00CBEE)),
   LineInfo(id: 'S2', type: LineType.sBahn, color: Color(0xFF71BF44)),
@@ -23,7 +23,6 @@ const munichLines = <LineInfo>[
   LineInfo(id: 'S6', type: LineType.sBahn, color: Color(0xFF00975F)),
   LineInfo(id: 'S7', type: LineType.sBahn, color: Color(0xFF8B3533)),
   LineInfo(id: 'S8', type: LineType.sBahn, color: Color(0xFFF6A804)),
-  LineInfo(id: 'S20', type: LineType.sBahn, color: Color(0xFFFB606F)),
 ];
 
 // ─── Munich Stations ────────────────────────────────────────
@@ -91,23 +90,24 @@ const _munichLineStations = <String, List<String>>{
     'Moosfeld', 'Messestadt West', 'Messestadt Ost',
   ],
   'U8': [
-    'Olympia-Einkaufszentrum', 'Georg-Brauchle-Ring', 'Westfriedhof',
-    'Gern', 'Rotkreuzplatz', 'Maillingerstraße', 'Stiglmaierplatz',
-    'Hauptbahnhof', 'Sendlinger Tor', 'Goetheplatz', 'Poccistraße',
-    'Implerstraße', 'Brudermühlstraße', 'Thalkirchen',
-    'Obersendling', 'Aidenbachstraße', 'Machtlfinger Straße',
-    'Forstenrieder Allee', 'Basler Straße', 'Fürstenried West',
+    'Olympiazentrum', 'Petuelring', 'Scheidplatz',
+    'Hohenzollernplatz', 'Josephsplatz', 'Theresienstraße',
+    'Königsplatz', 'Hauptbahnhof', 'Sendlinger Tor',
+    'Fraunhoferstraße', 'Kolumbusplatz', 'Silberhornstraße',
+    'Untersbergstraße', 'Giesing', 'Karl-Preis-Platz',
+    'Innsbrucker Ring', 'Michaelibad', 'Quiddestraße',
+    'Neuperlach Zentrum',
   ],
   // ── S-Bahn ──────────────────────────────────────────────
   'S1': [
-    'Freising', 'Pulling', 'Neufahrn', 'Eching',
-    'Lohhof', 'Unterschleißheim', 'Oberschleißheim',
+    'Freising', 'Pulling', 'Neufahrn', 'Hallbergmoos',
+    'Flughafen München',
+    'Eching', 'Lohhof', 'Unterschleißheim', 'Oberschleißheim',
     'Feldmoching', 'Fasanerie', 'Moosach',
     'Laim', 'Hirschgarten', 'Donnersbergerbrücke',
     'Hackerbrücke', 'Hauptbahnhof', 'Karlsplatz (Stachus)',
     'Marienplatz', 'Isartor', 'Rosenheimer Platz', 'Ostbahnhof',
-    'Leuchtenbergring', 'Berg am Laim',
-    'Flughafen München',
+    'Leuchtenbergring',
   ],
   'S2': [
     'Petershausen', 'Vierkirchen-Esterhofen', 'Röhrmoos',
@@ -136,7 +136,7 @@ const _munichLineStations = <String, List<String>>{
   'S4': [
     'Geltendorf', 'Türkenfeld', 'Grafrath', 'Schöngeising',
     'Buchenau', 'Fürstenfeldbruck', 'Eichenau', 'Puchheim',
-    'Aubing', 'Leienfelsstraße', 'Pasing',
+    'Aubing', 'Pasing',
     'Laim', 'Hirschgarten', 'Donnersbergerbrücke',
     'Hackerbrücke', 'Hauptbahnhof', 'Karlsplatz (Stachus)',
     'Marienplatz', 'Isartor', 'Rosenheimer Platz', 'Ostbahnhof',
@@ -167,7 +167,7 @@ const _munichLineStations = <String, List<String>>{
     'Marienplatz', 'Isartor', 'Rosenheimer Platz', 'Ostbahnhof',
     'St.-Martin-Straße', 'Giesing', 'Perlach',
     'Neuperlach Süd', 'Neubiberg', 'Ottobrunn',
-    'Hohenbrunn', 'Wächterhof', 'Höhenkirchen-Siegertsbrunn',
+    'Hohenbrunn', 'Höhenkirchen-Siegertsbrunn',
     'Dürrnhaar', 'Aying', 'Peiß', 'Großhelfendorf',
     'Kreuzstraße',
   ],
@@ -183,16 +183,6 @@ const _munichLineStations = <String, List<String>>{
     'Daglfing', 'Englschalking', 'Johanneskirchen',
     'Unterföhring', 'Ismaning', 'Hallbergmoos',
     'Flughafen München',
-  ],
-  'S20': [
-    'Pasing', 'Laim', 'Hirschgarten', 'Donnersbergerbrücke',
-    'Hackerbrücke', 'Hauptbahnhof', 'Karlsplatz (Stachus)',
-    'Marienplatz', 'Isartor', 'Rosenheimer Platz', 'Ostbahnhof',
-    'Leuchtenbergring', 'Berg am Laim',
-    'Daglfing', 'Englschalking', 'Johanneskirchen',
-    'Unterföhring', 'Ismaning', 'Hallbergmoos',
-    'Freising', 'Pulling', 'Neufahrn',
-    'Hörlkofen',
   ],
 };
 
