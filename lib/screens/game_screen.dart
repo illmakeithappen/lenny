@@ -297,6 +297,7 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   Widget _buildResultSummary() {
+    final s = LanguageScope.of(context).strings;
     final round = _lastRound!;
     final Color scoreColor;
     if (round.isPerfect) {
