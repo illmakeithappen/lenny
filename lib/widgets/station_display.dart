@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../data/stations.dart';
+import '../main.dart';
 
 class StationDisplay extends StatelessWidget {
   final Station station;
@@ -8,6 +9,7 @@ class StationDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final s = LanguageScope.of(context).strings;
     return Card(
       elevation: 3,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -36,7 +38,7 @@ class StationDisplay extends StatelessWidget {
                 ),
                 const SizedBox(width: 6),
                 Text(
-                  'Welche Linien halten an',
+                  s.whichLinesStop,
                   style: TextStyle(
                     fontSize: 13,
                     color: Colors.white.withValues(alpha: 0.5),
@@ -62,7 +64,7 @@ class StationDisplay extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
-                '${station.lineIds.length} ${station.lineIds.length == 1 ? "Linie" : "Linien"}',
+                s.lineCount(station.lineIds.length),
                 style: TextStyle(
                   fontSize: 12,
                   color: Colors.white.withValues(alpha: 0.6),

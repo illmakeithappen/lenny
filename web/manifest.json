@@ -1,6 +1,6 @@
 {
-    "name": "lenny",
-    "short_name": "lenny",
+    "name": "trainspots",
+    "short_name": "trainspots",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

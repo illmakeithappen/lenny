@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../data/lines.dart';
 import '../data/stations.dart';
+import '../main.dart';
 import '../models/game_round.dart';
 import '../models/game_state.dart';
 import '../widgets/line_button.dart';
@@ -104,6 +105,7 @@ class _GameScreenState extends State<GameScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final s = LanguageScope.of(context).strings;
     final roundDisplay = _showingResult
         ? _gameState.totalRounds
         : _gameState.currentRound;
@@ -194,7 +196,7 @@ class _GameScreenState extends State<GameScreen> {
           IconButton(
             onPressed: _endGame,
             icon: const Icon(Icons.close),
-            tooltip: 'Beenden',
+            tooltip: s.endButton,
           ),
         ],
       ),
@@ -254,7 +256,7 @@ class _GameScreenState extends State<GameScreen> {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          isLastRound ? 'Endstation!' : 'Weiterfahren',
+                          isLastRound ? s.lastStop : s.continueButton,
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -277,9 +279,9 @@ class _GameScreenState extends State<GameScreen> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: const Text(
-                      'Antwort pruefen',
-                      style: TextStyle(
+                    child: Text(
+                      s.checkAnswer,
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
@@ -324,9 +326,9 @@ class _GameScreenState extends State<GameScreen> {
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(color: Colors.green.shade200),
                 ),
-                child: const Text(
-                  'Perfekte Fahrt!',
-                  style: TextStyle(
+                child: Text(
+                  s.perfectRide,
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     color: Colors.green,
@@ -335,7 +337,7 @@ class _GameScreenState extends State<GameScreen> {
               ),
             const SizedBox(height: 4),
             Text(
-              '${round.score >= 0 ? "+" : ""}${round.score} Punkte',
+              s.points(round.score),
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
@@ -344,11 +346,11 @@ class _GameScreenState extends State<GameScreen> {
             ),
             const SizedBox(height: 8),
             if (round.hits.isNotEmpty)
-              _resultRow('Richtig', round.hits, Colors.green),
+              _resultRow(s.correct, round.hits, Colors.green),
             if (round.wrongGuesses.isNotEmpty)
-              _resultRow('Falsch', round.wrongGuesses, Colors.red),
+              _resultRow(s.wrong, round.wrongGuesses, Colors.red),
             if (round.misses.isNotEmpty)
-              _resultRow('Vergessen', round.misses, Colors.orange),
+              _resultRow(s.missed, round.misses, Colors.orange),
           ],
         ),
       ),
@@ -356,19 +358,19 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   Widget _resultRow(String label, Set<String> lineIds, Color color) {
+    final IconData icon;
+    if (color == Colors.green) {
+      icon = Icons.check_circle_rounded;
+    } else if (color == Colors.red) {
+      icon = Icons.cancel_rounded;
+    } else {
+      icon = Icons.remove_circle_outline_rounded;
+    }
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 3),
       child: Row(
         children: [
-          Icon(
-            label == 'Richtig'
-                ? Icons.check_circle_rounded
-                : label == 'Falsch'
-                    ? Icons.cancel_rounded
-                    : Icons.remove_circle_outline_rounded,
-            color: color,
-            size: 18,
-          ),
+          Icon(icon, color: color, size: 18),
           const SizedBox(width: 8),
           Text(
             '$label: ',

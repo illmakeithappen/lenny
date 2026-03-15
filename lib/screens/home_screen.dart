@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../data/lines.dart';
 import '../data/stations.dart';
+import '../l10n/app_strings.dart';
+import '../main.dart';
 import '../models/game_state.dart';
 import 'game_screen.dart';
 
@@ -31,6 +33,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final stationCount = _stationCount;
+    final scope = LanguageScope.of(context);
+    final s = scope.strings;
 
     return Scaffold(
       body: Container(
@@ -52,6 +56,9 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  // Language toggle
+                  _buildLanguageToggle(scope),
+                  const SizedBox(height: 24),
                   // Steam train ASCII art
                   Text(
                     '    __  __\n'
@@ -70,11 +77,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(height: 24),
                   // Title
                   const Text(
-                    'LENNY',
+                    'TRAINSPOTS',
                     style: TextStyle(
-                      fontSize: 56,
+                      fontSize: 48,
                       fontWeight: FontWeight.w900,
-                      letterSpacing: 8,
+                      letterSpacing: 6,
                       color: Colors.white,
                     ),
                   ),
@@ -90,9 +97,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       borderRadius: BorderRadius.circular(4),
                     ),
-                    child: const Text(
-                      'BERLINER LINIENRATEN',
-                      style: TextStyle(
+                    child: Text(
+                      s.subtitle,
+                      style: const TextStyle(
                         fontSize: 14,
                         letterSpacing: 4,
                         color: Colors.white70,
@@ -124,9 +131,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               size: 20,
                             ),
                             const SizedBox(width: 8),
-                            const Text(
-                              'Streckengebiet',
-                              style: TextStyle(
+                            Text(
+                              s.areaLabel,
+                              style: const TextStyle(
                                 color: Colors.white70,
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
@@ -140,8 +147,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           children: [
                             Expanded(
                               child: _modeButton(
-                                label: 'Ringbahn',
-                                subtitle: 'Innerer Ring',
+                                label: s.ringbahn,
+                                subtitle: s.ringbahnSub,
                                 icon: Icons.circle_outlined,
                                 isSelected: _innerRingOnly,
                                 onTap: () =>
@@ -151,8 +158,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             const SizedBox(width: 8),
                             Expanded(
                               child: _modeButton(
-                                label: 'Gesamtnetz',
-                                subtitle: 'Alle Stationen',
+                                label: s.fullNetwork,
+                                subtitle: s.fullNetworkSub,
                                 icon: Icons.public,
                                 isSelected: !_innerRingOnly,
                                 onTap: () =>
@@ -189,9 +196,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               size: 20,
                             ),
                             const SizedBox(width: 8),
-                            const Text(
-                              'Linientyp',
-                              style: TextStyle(
+                            Text(
+                              s.lineTypeLabel,
+                              style: const TextStyle(
                                 color: Colors.white70,
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
@@ -231,7 +238,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         const SizedBox(height: 12),
                         Text(
-                          '$stationCount Stationen  ·  $maxRounds Runden',
+                          s.stationsAndRounds(stationCount, maxRounds),
                           style: TextStyle(
                             color: Colors.white.withValues(alpha: 0.5),
                             fontSize: 13,
@@ -257,9 +264,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
                     },
                     icon: const Icon(Icons.play_arrow_rounded, size: 28),
-                    label: const Text(
-                      'Losfahren!',
-                      style: TextStyle(
+                    label: Text(
+                      s.startButton,
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
@@ -281,7 +288,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   // Bottom flavor text
                   Text(
-                    'Tsch tsch tsch ...',
+                    s.flavorText,
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.white.withValues(alpha: 0.25),
@@ -291,6 +298,49 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
             ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLanguageToggle(LanguageScope scope) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        _langChip('DE', AppLanguage.de, scope),
+        const SizedBox(width: 8),
+        _langChip('EN', AppLanguage.en, scope),
+      ],
+    );
+  }
+
+  Widget _langChip(String label, AppLanguage lang, LanguageScope scope) {
+    final isSelected = scope.language == lang;
+    return GestureDetector(
+      onTap: () => scope.onLanguageChanged(lang),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? Colors.white.withValues(alpha: 0.2)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isSelected
+                ? Colors.white.withValues(alpha: 0.5)
+                : Colors.white.withValues(alpha: 0.15),
+            width: isSelected ? 2 : 1,
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: isSelected ? Colors.white : Colors.white38,
+            fontWeight: FontWeight.bold,
+            fontSize: 13,
+            letterSpacing: 1,
           ),
         ),
       ),

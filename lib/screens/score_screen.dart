@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../l10n/app_strings.dart';
+import '../main.dart';
 import '../models/game_state.dart';
 import 'game_screen.dart';
 
@@ -9,7 +11,8 @@ class ScoreScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final verdict = _getVerdict();
+    final s = LanguageScope.of(context).strings;
+    final verdict = _getVerdict(s);
 
     return Scaffold(
       body: Container(
@@ -77,7 +80,7 @@ class ScoreScreen extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        'Punkte',
+                        s.pointsLabel,
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.blueGrey.shade400,
@@ -86,17 +89,17 @@ class ScoreScreen extends StatelessWidget {
                       const SizedBox(height: 20),
                       _statRow(
                         Icons.route_rounded,
-                        'Runden',
+                        s.roundsLabel,
                         '${gameState.totalRounds}',
                       ),
                       _statRow(
                         Icons.star_rounded,
-                        'Perfekte Fahrten',
+                        s.perfectRidesLabel,
                         '${gameState.perfectRounds}',
                       ),
                       _statRow(
                         Icons.percent_rounded,
-                        'Trefferquote',
+                        s.hitRateLabel,
                         '${_hitPercentage()}%',
                       ),
                     ],
@@ -121,7 +124,7 @@ class ScoreScreen extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                         child: Text(
-                          'Fahrtverlauf',
+                          s.journeyLog,
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
@@ -234,12 +237,14 @@ class ScoreScreen extends StatelessWidget {
                           MaterialPageRoute(
                             builder: (_) => GameScreen(
                               innerRingOnly: gameState.innerRingOnly,
+                              includeUBahn: gameState.includeUBahn,
+                              includeSBahn: gameState.includeSBahn,
                             ),
                           ),
                         );
                       },
                       icon: const Icon(Icons.replay_rounded),
-                      label: const Text('Nochmal'),
+                      label: Text(s.playAgain),
                       style: FilledButton.styleFrom(
                         backgroundColor: const Color(0xFFDA421E),
                         foregroundColor: Colors.white,
@@ -255,7 +260,7 @@ class ScoreScreen extends StatelessWidget {
                         Navigator.of(context).popUntil((r) => r.isFirst);
                       },
                       icon: const Icon(Icons.home_rounded),
-                      label: const Text('Depot'),
+                      label: Text(s.homeButton),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: Colors.white70,
                         side: BorderSide(
@@ -290,39 +295,39 @@ class ScoreScreen extends StatelessWidget {
     return (totalCorrect * 100 / totalLines).round();
   }
 
-  _Verdict _getVerdict() {
+  _Verdict _getVerdict(AppStrings s) {
     final pct = _hitPercentage();
     final perfect = gameState.perfectRounds;
 
     if (perfect == maxRounds) {
       return _Verdict(
         icon: '\u{1F682}',
-        title: 'Lokfuehrer!',
-        subtitle: 'Alle Runden perfekt. Du kennst das Netz wie deine Westentasche.',
+        title: s.verdictPerfectTitle,
+        subtitle: s.verdictPerfectSub,
       );
     } else if (pct >= 80) {
       return _Verdict(
         icon: '\u{1F683}',
-        title: 'Stammfahrgast',
-        subtitle: 'Starke Leistung! Du findest dich bestens zurecht.',
+        title: s.verdictGreatTitle,
+        subtitle: s.verdictGreatSub,
       );
     } else if (pct >= 50) {
       return _Verdict(
         icon: '\u{1F68B}',
-        title: 'Gelegenheitsfahrer',
-        subtitle: 'Nicht schlecht, aber da geht noch mehr.',
+        title: s.verdictOkTitle,
+        subtitle: s.verdictOkSub,
       );
     } else if (pct >= 25) {
       return _Verdict(
         icon: '\u{1F6A2}',
-        title: 'Schiffbruch',
-        subtitle: 'Du bist wohl eher mit dem Boot unterwegs ...',
+        title: s.verdictBadTitle,
+        subtitle: s.verdictBadSub,
       );
     } else {
       return _Verdict(
         icon: '\u{1F6B6}',
-        title: 'Fussgaenger',
-        subtitle: 'Vielleicht erstmal den Netzplan studieren?',
+        title: s.verdictWorstTitle,
+        subtitle: s.verdictWorstSub,
       );
     }
   }
