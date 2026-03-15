@@ -36,7 +36,6 @@ const allLines = <LineInfo>[
   LineInfo(id: 'S25', type: LineType.sBahn, color: Color(0xFF005F27)),
   LineInfo(id: 'S26', type: LineType.sBahn, color: Color(0xFF005F27)),
   LineInfo(id: 'S41/S42', type: LineType.sBahn, color: Color(0xFFA23B1E)),
-  LineInfo(id: 'S45', type: LineType.sBahn, color: Color(0xFFC89F51)),
   LineInfo(id: 'S46', type: LineType.sBahn, color: Color(0xFFC89F51)),
   LineInfo(id: 'S47', type: LineType.sBahn, color: Color(0xFFC89F51)),
   LineInfo(id: 'S75', type: LineType.sBahn, color: Color(0xFF6F4E9C)),
